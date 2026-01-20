@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Newspapers | PathraVahak</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #5C2E14;
+      --accent-color: #decaab;
+      --text-color: black;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f7f1;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: var(--primary-color);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 20px 0 20px;
+      overflow-y: auto;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+    .sidebar h2 {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: #fff;
+      padding: 12px 20px;
+      margin: 5px 0;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a:hover {
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      transform: translateX(5px);
+    }
+    #datetime {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      font-size: 1rem;
+      color: white;
+      padding: 10px;
+      background-color: black;
+      border-radius: 6px;
+      font-family: 'Segoe UI', sans-serif;
+      z-index: 2001;
+    }
+    .main-content {
+      margin-left: 250px;
+      flex: 1;
+      padding: 40px 20px;
+      min-height: 100vh;
+      background: transparent;
+    }
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 32px;
+      font-size: 2rem;
+      text-align: center;
+    }
+    .newspaper-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .newspaper-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px 0 var(--primary-color, #5C2E14, 0.09);
+      border: 1px solid #eee;
+      width: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 22px 18px 18px 18px;
+      transition: box-shadow 0.3s, transform 0.3s;
+      position: relative;
+    }
+    .newspaper-card:hover {
+      box-shadow: 0 8px 32px 0 var(--primary-color, #5C2E14, 0.12);
+      transform: translateY(-8px) scale(1.03);
+      border-color: var(--primary-color);
+      z-index: 2;
+    }
+    .newspaper-card img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      border: 2px solid var(--accent-color);
+      background: #f2f2f2;
+    }
+    .newspaper-card h3 {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .newspaper-card p {
+      font-size: 0.98rem;
+      color: #444;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .subscribe-btn {
+      background-color: var(--accent-color);
+      color: var(--primary-color);
+      border: none;
+      border-radius: 6px;
+      padding: 10px 24px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      max-width: 220px;
+      text-align: center;
+    }
+    .subscribe-btn:hover {
+      background-color: #cbb07c;
+    }
+    @media (max-width: 900px) {
+      .main-content { padding: 20px 5px; }
+      .newspaper-cards { gap: 16px; }
+      .newspaper-card { width: 90vw; max-width: 340px; }
+    }
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 100vw;
+        height: auto;
+        position: relative;
+        padding: 10px;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 10px 3px;
+      }
+      #datetime {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 10px;
+        font-size: 0.95rem;
+        padding: 8px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <h2 style="display: flex; align-items: center; gap: 10px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h7v2H7v-2zm0 4h10v2H7v-2z"/>
+      </svg>
+      PathraVahak
+    </h2>
+    <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="employees.html"><i class="fas fa-users-cog"></i> Employees</a>
+    <a href="subscriptions.html"><i class="fas fa-newspaper"></i> Subscriptions</a>
+    <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+    <a href="deliveries.html"><i class="fas fa-box"></i> Deliveries</a>
+    <a href="payments.html"><i class="fas fa-money-bill"></i> Payments</a>
+    <a href="complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a>
+    <a href="newspapers.html"><i class="fas fa-book-open"></i> Newspapers</a>
+    <a href="retailoutlets.html"><i class="fas fa-store"></i> Retail Outlets</a>
+    <a href="retailsales.html"><i class="fas fa-shopping-cart"></i> Retail Sales</a>
+    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    <a href="/api/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div class="main-content">
+    <h1>Newspapers</h1>
+    <div class="newspaper-cards" id="newspaperCards">
+      <div class="newspaper-card">
+        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=cover&w=400&q=80" alt="Vijaya Karnataka">
+        <h3>Vijaya Karnataka</h3>
+        <p>One of Karnataka's most popular Kannada-language dailies, known for its comprehensive news coverage.</p>
+        <button class="subscribe-btn" onclick="window.location.href='subscriptions.html'">Subscribe</button>
+
+      </div>
+      <div class="newspaper-card">
+        <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=cover&w=400&q=80" alt="Prajavani">
+        <h3>Prajavani</h3>
+        <p>Renowned for its balanced reporting and deep insights into national and international events.</p>
+        <button class="subscribe-btn">Subscribe</button>
+      </div>
+      <div class="newspaper-card">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=cover&w=400&q=80" alt="Udayavani">
+        <h3>Udayavani</h3>
+        <p>A leading Kannada daily, widely read across Karnataka and beyond.</p>
+        <button class="subscribe-btn">Subscribe</button>
+      </div>
+      <div class="newspaper-card">
+        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=cover&w=400&q=80" alt="Samyuktha Karnataka">
+        <h3>Samyuktha Karnataka</h3>
+        <p>Popular Kannada-language daily with a strong presence in North Karnataka.</p>
+        <button class="subscribe-btn">Subscribe</button>
+      </div>
+      <div class="newspaper-card">
+        <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=cover&w=400&q=80" alt="Deccan Herald">
+        <h3>Deccan Herald</h3>
+        <p>English-language daily with a strong presence in South India, known for its quality journalism.</p>
+        <button class="subscribe-btn">Subscribe</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="datetime"></div>
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+      document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // Example event listener for subscription buttons
+    document.querySelectorAll('.subscribe-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    window.location.href = 'subscriptions.html';
+  });
+});
+
+  </script>
+</body>
+</html>

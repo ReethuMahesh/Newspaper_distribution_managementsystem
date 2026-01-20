@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Subscriptions | PathraVahak</title>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+        :root {
+            --primary-color: #5c2e14;
+            --accent-color: #decaab;
+            --text-color: black;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f9f7f1;
+            color: var(--text-color);
+        }
+
+        h1::before {
+      content: "PathraVahak";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 6rem;
+      color: rgba(0, 0, 0, 0.12);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+        .sidebar {
+    width: 250px;
+    position: fixed; /* make it fixed on the left */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: var(--primary-color);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    transition: transform 0.3s ease;
+    overflow-y: auto; /* allow vertical scroll */
+}
+
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #fff;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            transform: translateX(5px);
+        }
+
+        
+
+        .main-content {
+    margin-left: 250px; /* same as sidebar width */
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto; /* allow vertical scroll */
+    max-height: 100vh;
+}
+
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .toggle-buttons {
+            margin-bottom: 20px;
+        }
+
+        .toggle-buttons .btn {
+            margin-right: 10px;
+        }
+        .form-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    max-height: 400px;  /* set a max height */
+    overflow-y: auto;   /* make it scrollable */
+}
+
+        .form-section,
+        .table-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section h2,
+        .table-section h2 {
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            flex: 1 1 200px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            flex: 2 1 300px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #3e1f0e;
+        }
+
+        .btn.active {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: var(--accent-color);
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-section input,
+        .filter-section select {
+            margin-right: 10px;
+            padding: 6px;
+        }
+
+        #datetime {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 1rem;
+            color: white;
+            padding: 10px;
+            background-color: black;
+            border-radius: 6px;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <h2 style="display: flex; align-items: center; gap: 10px">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="white"
+            >
+                <path
+                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h7v2H7v-2zm0 4h10v2H7v-2z"
+                />
+            </svg>
+            PathraVahak
+        </h2>
+        <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="employees.html"><i class="fas fa-users-cog"></i> Employees</a>
+        <a href="subscriptions.html"
+            ><i class="fas fa-newspaper"></i> Subscriptions</a
+        >
+        <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+        <a href="deliveries.html"><i class="fas fa-box"></i> Deliveries</a>
+        <a href="payments.html"><i class="fas fa-money-bill"></i> Payments</a>
+        <a href="complaints.html"
+            ><i class="fas fa-exclamation-circle"></i> Complaints</a
+        >
+        <a href="newspapers.html"><i class="fas fa-book-open"></i> Newspapers</a>
+        <a href="retailoutlets.html"
+            ><i class="fas fa-store"></i> Retail Outlets</a
+        >
+        <a href="retailsales.html"
+            ><i class="fas fa-shopping-cart"></i> Retail Sales</a
+        >
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        <a href="/api/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Manage Subscriptions</h1>
+
+        <div class="toggle-buttons">
+            <button class="btn active" onclick="showSection('view', this)">
+                View Subscriptions
+            </button>
+            <button class="btn" onclick="showSection('add', this)">
+                Add Subscription
+            </button>
+        </div>
+
+        <div class="form-section" style="display: none">
+            <h2>Add Subscription</h2>
+            <form id="subscriptionForm">
+                <div class="form-group">
+                    <label for="subscriptionId">Subscription ID:</label>
+                    <input type="text" id="subscriptionId" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="customerId">Customer ID:</label>
+                    <input type="text" id="customerId" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="customerName">Customer Name:</label>
+                    <input type="text" id="customerName" required />
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <select id="address">
+                        <option value="Toll Naka">Toll Naka</option>
+                        <option value="Vidyagiri">Vidyagiri</option>
+                        <option value="Gandhinagar">Gandhinagar</option>
+                        <option value="Lakmanahalli">Lakmanahalli</option>
+                        <option value="Y.Shettar Colony">Y.Shettar Colony</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contact">Contact Number:</label>
+                    <input type="tel" id="contact" required />
+                    <div id="contact-error" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required />
+                    <div id="email-error" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="subscriptionType">Subscription Type:</label>
+                    <select id="subscriptionType">
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newspapers">Newspaper(s):</label>
+                    <select id="newspapers">
+                        <option value="Vijaya Karnataka">Vijaya Karnataka</option>
+                        <option value="Prajavani">Prajavani</option>
+                        <option value="Udayavani">Udayavani</option>
+                        <option value="Samyuktha Karnataka">Samyuktha Karnataka</option>
+                        <option value="Deccan Herald">Deccan Herald</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" required />
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" required />
+                </div>
+                <div class="form-group">
+                    <label for="deliveryTime">Delivery Time:</label>
+                    <select id="deliveryTime">
+                        <option value="Morning">Morning</option>
+                        <option value="Evening">Evening</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="status">Subscription Status:</label>
+                    <select id="status">
+                        <option value="Active" class="active-status">Active</option>
+                        <option value="Pending" class="paused-status">Pending</option>
+                        <option value="Expired" class="cancelled-status">Expired</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price (₹):</label>
+                    <input type="number" id="price" required min="0" step="0.01" />
+                </div>
+
+                <button class="btn" type="submit" data-action="add">Add Subscription</button>
+            </form>
+        </div>
+
+        <div class="table-section">
+            <h2>View Subscriptions</h2>
+            <div class="filter-section">
+                <input type="text" placeholder="Search by customer name or ID" id="searchFilter"/>
+                <select id="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                   
+
+                </select>
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Expired">Expired</option>
+                </select>
+                <select id="newspaperFilter">
+                    <option value="">All Newspapers</option>
+                    <option value="Vijaya Karnataka">Vijaya Karnataka</option>
+                    <option value="Prajavani">Prajavani</option>
+                    <option value="Udayavani">Udayavani</option>
+                    <option value="Samyuktha Karnataka">Samyuktha Karnataka</option>
+                    <option value="Deccan Herald">Deccan Herald</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Newspaper(s)</th>
+                        <th>Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="datetime"></div>
+    <script>
+        function updateDateTime() {
+         const now = new Date();
+         const options = {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZoneName: 'short'
+         };
+         document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+        }
+      
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Initial call
+
+        function addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+function addMonths(date, months) {
+    const result = new Date(date);
+    result.setMonth(result.getMonth() + months);
+    return result;
+}
+
+function formatDate(date) {
+    const d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+    return [
+        year,
+        month.length < 2 ? '0' + month : month,
+        day.length < 2 ? '0' + day : day
+    ].join('-');
+}
+
+function calculateEndDate() {
+    const startDateInput = document.getElementById('startDate');
+    const typeInput = document.getElementById('subscriptionType');
+    const endDateInput = document.getElementById('endDate');
+
+    const startDateValue = startDateInput.value;
+    const typeValue = typeInput.value;
+
+    if (!startDateValue || !typeValue) {
+        endDateInput.value = '';
+        return;
+    }
+
+    const startDate = new Date(startDateValue);
+    let endDate;
+
+    if (typeValue === 'Daily') {
+        endDate = startDate;
+    } else if (typeValue === 'Weekly') {
+        endDate = addDays(startDate, 6);
+    } else if (typeValue === 'Monthly') {
+        endDate = addMonths(startDate, 1);
+        endDate.setDate(endDate.getDate() - 1);
+    } else {
+        endDateInput.value = '';
+        return;
+    }
+
+    endDateInput.value = formatDate(endDate);
+}
+
+// Attach the event listeners
+document.getElementById('startDate').addEventListener('change', calculateEndDate);
+document.getElementById('subscriptionType').addEventListener('change', calculateEndDate);
+
+      
+        function showSection(section, btn) {
+         const formSection = document.querySelector(".form-section");
+         const tableSection = document.querySelector(".table-section");
+         const buttons = document.querySelectorAll(".toggle-buttons .btn");
+      
+         buttons.forEach((b) => b.classList.remove("active"));
+         btn.classList.add("active");
+      
+         if (section === "add") {
+          formSection.style.display = "block";
+          tableSection.style.display = "none";
+         } else {
+          formSection.style.display = "none";
+          tableSection.style.display = "block";
+         }
+        }
+      
+        let currentEditId = null; // To store the ID of the subscription being edited
+        let nextCustomerId = 1;
+        let existingPhoneNumbers = new Set(); // To store phone numbers
+      
+        function generateSubscriptionId() {
+         const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+         return `SUB${random}`;
+        }
+      
+        function generateCustomerId() {
+         const customerId = `CUS${nextCustomerId.toString().padStart(4, '0')}`;
+         return customerId;
+        }
+      
+        function populateEditForm(editButton) {
+         const row = editButton.closest('tr');
+         const id = editButton.dataset.id;
+         currentEditId = id;
+      
+         const cells = row.querySelectorAll('td');
+         const subscriptionId = cells[0].textContent;
+         const customerName = cells[1].textContent;
+         const newspapers = cells[2].textContent;
+         const subscriptionType = cells[3].textContent;
+         const startDate = cells[4].textContent;
+         const endDate = cells[5].textContent;
+         const status = cells[6].textContent;
+      
+         // Fetch additional customer details
+         const customerId = row.dataset.customerId;
+         const address = row.dataset.address;
+         const contact = row.dataset.contact;
+         const email = row.dataset.email;
+         const deliveryTime = row.dataset.deliveryTime;
+         const price = row.dataset.price;
+      
+      
+         document.getElementById('subscriptionId').value = subscriptionId;
+         document.getElementById('customerName').value = customerName;
+         document.getElementById('address').value = address;
+         document.getElementById('contact').value = contact;
+         document.getElementById('email').value = email;
+         document.getElementById('subscriptionType').value = subscriptionType;
+         document.getElementById('newspapers').value = newspapers;
+         document.getElementById('startDate').value = startDate;
+         document.getElementById('endDate').value = endDate;
+         document.getElementById('deliveryTime').value = deliveryTime;
+         document.getElementById('status').value = status;
+         document.getElementById('price').value = price;
+         document.getElementById('customerId').value = customerId;
+         document.getElementById('contact').value = contact; //set contact
+      
+      
+         const addFormTitle = document.querySelector('.form-section h2');
+         const submitButton = document.querySelector('.form-section button[type="submit"]');
+      
+         addFormTitle.textContent = 'Edit Subscription';
+         submitButton.textContent = 'Update Subscription';
+         submitButton.dataset.action = 'update'; // Add a data attribute to identify update
+      
+         showSection('add', document.querySelector('.toggle-buttons .btn:last-child')); // Switch to the add form
+        }
+      
+        document.getElementById('subscriptionForm').addEventListener('submit', async function (e) {
+         e.preventDefault();
+      
+         const subscriptionId = document.getElementById('subscriptionId').value;
+         const customerId = document.getElementById('customerId').value;
+         const customerName = document.getElementById('customerName').value;
+         const address = document.getElementById('address').value;
+         const contact = document.getElementById('contact').value;
+         const email = document.getElementById('email').value;
+         const subscriptionType = document.getElementById('subscriptionType').value;
+         const newspapers = document.getElementById('newspapers').value;
+         const startDate = document.getElementById('startDate').value;
+         const endDate = document.getElementById('endDate').value;
+         const deliveryTime = document.getElementById('deliveryTime').value;
+         const status = document.getElementById('status').value;
+         const price = parseFloat(document.getElementById('price').value);
+      
+      
+         const data = {
+          subscriptionId: subscriptionId,
+          customerId: customerId,
+          customerName: customerName,
+          address: address,
+          contact: contact,
+          email: email,
+          subscriptionType: subscriptionType,
+          newspapers: newspapers,
+          startDate: startDate,
+          endDate: endDate,
+          deliveryTime: deliveryTime,
+          status: status,
+          price: price,
+         };
+      
+         const action = this.querySelector('button[type="submit"]').dataset.action;
+         let url = '/api/subscriptions';
+         let method = 'POST';
+      
+         if (action === 'update' && currentEditId) {
+          url = `/api/subscriptions/${currentEditId}`;
+          method = 'PUT';
+         }
+      
+         // Check for duplicate phone number
+         if (action === 'add' && existingPhoneNumbers.has(contact)) {
+          alert('Phone number already exists. Please use a unique phone number.');
+          return; // Stop submission
+         }
+      
+         try {
+          const res = await fetch(url, {
+           method: method,
+           headers: {
+            'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(data)
+          });
+      
+          if (!res.ok) {
+           const errorText = await res.text();
+           throw new Error(`HTTP error! status: ${res.status}, body: ${errorText}`);
+          }
+      
+          const result = await res.json();
+          alert(result.message || `Subscription ${action === 'update' ? 'updated' : 'saved'}!`);
+          window.location.reload();
+         } catch (err) {
+          console.error(err);
+          alert(`Error ${action === 'update' ? 'updating' : 'adding'} subscription.  Please check console for details.`);
+         } finally {
+          // Reset the form and action for the next add operation
+          this.querySelector('button[type="submit"]').textContent = 'Add Subscription';
+          this.querySelector('button[type="submit"]').dataset.action = 'add';
+          currentEditId = null;
+          document.querySelector('.form-section h2').textContent = 'Add Subscription';
+          resetForm(); // Call resetForm to generate new IDs
+         }
+        });
+      
+        function getStatusColor(status) {
+         switch (status) {
+          case 'Active':
+           return 'color: green';
+          case 'Pending':
+           return 'color: orange';
+          case 'Expired':
+           return 'color: red';
+          default:
+           return '';
+         }
+        }
+      
+        function isExpired(endDate) {
+         const today = new Date().toISOString().split('T')[0];
+         return endDate < today;
+        }
+      
+      
+        async function loadSubscriptions() {
+         try {
+          const res = await fetch('/api/subscriptions');
+          const data = await res.json();
+          const tbody = document.querySelector('tbody');
+          tbody.innerHTML = '';
+          existingPhoneNumbers.clear(); // Clear phone numbers
+          nextCustomerId = 1; // Reset counter on load
+      
+          data.forEach(sub => {
+           const expired = isExpired(sub.endDate);
+           const displayStatus = expired ? 'Expired' : sub.status;
+           existingPhoneNumbers.add(sub.contact); // Add to set
+      
+           // Update nextCustomerId if a larger ID is found
+           const currentIdNumber = parseInt(sub.customerId.slice(3), 10);
+           if (!isNaN(currentIdNumber) && currentIdNumber >= nextCustomerId) {
+            nextCustomerId = currentIdNumber + 1;
+           }
+      
+           const row = document.createElement('tr');
+           row.dataset.customerId = sub.customerId;
+           row.dataset.address = sub.address;
+           row.dataset.contact = sub.contact;
+           row.dataset.email = sub.email;
+           row.dataset.deliveryTime = sub.deliveryTime;
+           row.dataset.price = sub.price;
+           row.innerHTML = `
+            <td>${sub.subscriptionId}</td>
+            <td>${sub.customerName}</td>
+            <td>${sub.newspapers}</td>
+            <td>${sub.subscriptionType}</td>
+            <td>${sub.startDate}</td>
+            <td>${sub.endDate}</td>
+            <td style="${getStatusColor(displayStatus)}">${displayStatus}</td>
+            <td class="action-buttons">
+             <button class="edit-btn" data-id="${sub._id}" onclick="populateEditForm(this)">Edit</button>
+             <button class="delete-btn" data-id="${sub._id}" onclick="deleteSubscription(this)">Delete</button>
+            </td>
+           `;
+           tbody.appendChild(row);
+          });
+          applyFilters(); // Apply filters after loading data
+         } catch (err) {
+          console.error('Failed to load subscriptions', err);
+          alert('Failed to load subscriptions. Please check console for details.');
+         }
+        }
+      
+        async function deleteSubscription(deleteButton) {
+         const row = deleteButton.closest('tr');
+         const id = deleteButton.dataset.id;
+         const contact = row.dataset.contact; //get contact to remove
+      
+         if (confirm("Are you sure you want to delete this subscription?")) {
+          try {
+           const res = await fetch(`/api/subscriptions/${id}`, {
+            method: 'DELETE',
+           });
+           if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`HTTP error! status: ${res.status}, body: ${errorText}`);
+           }
+           const result = await res.json();
+           alert(result.message);
+           existingPhoneNumbers.delete(contact); //remove contact
+           window.location.reload(); // Reload to update the table
+          } catch (error) {
+           console.error("Error deleting subscription:", error);
+           alert("Failed to delete subscription. Please check the console for details.");
+          }
+         }
+        }
+      
+        function resetForm() {
+         document.getElementById('subscriptionId').value = generateSubscriptionId();
+         document.getElementById('customerId').value = generateCustomerId();
+         document.getElementById('customerName').value = '';
+         document.getElementById('address').value = '';
+         document.getElementById('contact').value = '';
+         document.getElementById('email').value = '';
+         document.getElementById('subscriptionType').value = '';
+         document.getElementById('newspapers').value = '';
+         document.getElementById('startDate').value = '';
+         document.getElementById('endDate').value = '';
+         document.getElementById('deliveryTime').value = '';
+         document.getElementById('status').value = 'Active';
+         document.getElementById('price').value = '';
+         document.getElementById('contact-error').textContent = '';
+         document.getElementById('email-error').textContent = '';
+         nextCustomerId++; // Increment for the next entry
+        }
+      
+        function initializeForm() {
+         document.getElementById('subscriptionId').value = generateSubscriptionId();
+         document.getElementById('customerId').value = generateCustomerId();
+        }
+      
+        showSection('view', document.querySelector('.toggle-buttons .btn:first-child'));
+        loadSubscriptions();
+      
+        document.querySelector('.toggle-buttons .btn:last-child').addEventListener('click', () => {
+         initializeForm();
+        });
+        initializeForm();
+      
+        const contactInput = document.getElementById('contact');
+        const emailInput = document.getElementById('email');
+        const contactError = document.getElementById('contact-error');
+        const emailError = document.getElementById('email-error');
+      
+        contactInput.addEventListener('input', () => {
+         const phoneRegex = /^[0-9]{10}$/;
+         if (!phoneRegex.test(contactInput.value)) {
+          contactError.textContent = "Phone number must be 10 digits";
+         } else {
+          contactError.textContent = "";
+         }
+        });
+      
+        emailInput.addEventListener('input', () => {
+         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+         if (!emailRegex.test(emailInput.value)) {
+          emailError.textContent = "Invalid email format";
+         } else {
+          emailError.textContent = "";
+         }
+        });
+      
+      
+        let emailCheckTimeout;
+        emailInput.addEventListener('input', () => {
+         const emailValue = emailInput.value.trim();
+         clearTimeout(emailCheckTimeout);
+      
+         if (emailValue) {
+          emailCheckTimeout = setTimeout(async () => {
+           try {
+            const response = await fetch(`/api/subscriptions/check-email/${emailValue}`);
+            const data = await response.json();
+            if (data.exists) {
+             emailError.textContent = 'This email address is already in use.';
+            } else {
+             emailError.textContent = '';
+            }
+           } catch (error) {
+            console.error('Error checking email:', error);
+            emailError.textContent = 'Error checking email. Please try again.';
+           }
+          }, 300);
+         } else {
+          emailError.textContent = '';
+         }
+        });
+      
+      
+      
+        // Get filter elements
+        const searchFilterInput = document.getElementById('searchFilter');
+        const typeFilterSelect = document.getElementById('typeFilter');
+        const statusFilterSelect = document.getElementById('statusFilter');
+        const newspaperFilterSelect = document.getElementById('newspaperFilter');
+      
+        // Add event listeners to the filter elements
+        searchFilterInput.addEventListener('input', applyFilters);
+        typeFilterSelect.addEventListener('change', applyFilters);
+        statusFilterSelect.addEventListener('change', applyFilters);
+        newspaperFilterSelect.addEventListener('change', applyFilters);
+      
+        function applyFilters() {
+         const searchText = searchFilterInput.value.toLowerCase();
+         const selectedType = typeFilterSelect.value;
+         const selectedStatus = statusFilterSelect.value;
+         const selectedNewspaper = newspaperFilterSelect.value;
+      
+         const rows = document.querySelector('tbody').getElementsByTagName('tr');
+         for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const customerName = row.cells[1].textContent.toLowerCase();
+          const newspapers = row.cells[2].textContent.toLowerCase();
+          const subscriptionType = row.cells[3].textContent;
+          const status = row.cells[6].textContent;
+      
+          const searchMatch = customerName.includes(searchText);
+          const typeMatch = !selectedType || subscriptionType === selectedType;
+          const statusMatch = !selectedStatus || status === selectedStatus;
+          const newspaperMatch = !selectedNewspaper || newspapers.includes(selectedNewspaper.toLowerCase());
+      
+          if (searchMatch && typeMatch && statusMatch && newspaperMatch) {
+           row.style.display = '';
+          } else {
+           row.style.display = 'none';
+          }
+         }
+        }
+       </script>
+       <script src="js/main.js"></script>
+</body>
+</html>
+

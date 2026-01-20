@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employees | PathraVahak</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #5C2E14;
+      --accent-color: #decaab;
+      --text-color: black;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f9f7f1;
+      color: var(--text-color);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: var(--primary-color);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
+      position: sticky;
+      top: 0;
+    }
+    .sidebar-content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: min-content;
+    }
+    .sidebar h2 {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: #fff;
+      padding: 12px 20px;
+      margin: 5px 0;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a:hover {
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      transform: translateX(5px);
+    }
+    #datetime {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      font-size: 1rem;
+      color: white;
+      background-color: black;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: 'Segoe UI', sans-serif;
+      z-index: 2001;
+    }
+    .main-content {
+      flex: 1;
+      height: 100vh;
+      padding: 50px;
+      position: relative;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .main-content h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      position: relative;
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      vertical-align: top;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      max-width: 320px;
+      width: max-content;
+      background-color: white;
+      color: var(--text-color);
+      text-align: left;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 9999;
+      top: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.3s;
+      white-space: normal;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .tooltip-table td {
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+    }
+    .tooltip-table tr:last-child td {
+      border-bottom: none;
+    }
+    table thead {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    table th, table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    table tbody tr:hover {
+      background-color: var(--accent-color);
+      color: var(--text-color);
+    }
+    h1::before {
+      content: "PathraVahak";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 6rem;
+      color: rgba(0, 0, 0, 0.05);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+    .search-container {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .search-container input {
+      padding: 8px;
+      width: 200px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .search-container button {
+      padding: 8px 12px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .search-container button:hover {
+      background-color: #4a2510;
+    }
+    /* Tooltip for customer name (browser native) */
+    .customer-name-tooltip {
+      border-bottom: 1px dotted var(--primary-color);
+      cursor: help;
+    }
+  </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h7v2H7v-2zm0 4h10v2H7v-2z"/>
+                </svg>
+                PathraVahak
+            </h2>
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="employees.html"><i class="fas fa-users-cog"></i> Employees</a>
+            <a href="subscriptions.html"><i class="fas fa-newspaper"></i> Subscriptions</a>
+            <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+            <a href="deliveries.html"><i class="fas fa-box"></i> Deliveries</a>
+            <a href="payments.html"><i class="fas fa-money-bill"></i> Payments</a>
+            <a href="complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a>
+            <a href="newspapers.html"><i class="fas fa-book-open"></i> Newspapers</a>
+            <a href="retailoutlets.html"><i class="fas fa-store"></i> Retail Outlets</a>
+            <a href="retailsales.html"><i class="fas fa-shopping-cart"></i> Retail Sales</a>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="/api/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1>Deliveries Overview</h1>
+        <div class="search-container">
+          <input type="text" id="employeeIdInput" placeholder="Enter Employee ID">
+          <button onclick="fetchEmployee()">Fetch Employee</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Assigned Area</th>
+                    <th>Customers</th>
+                    <th>Payments</th>
+                    <th>Total Customers</th>
+                    <th>Total Payments</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+                <!-- Data rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+    <div id="datetime"></div>
+
+    <script>
+      function updateDateTime() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+        document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+      }
+      setInterval(updateDateTime, 1000);
+      updateDateTime(); // Initial call
+
+      async function fetchEmployee() {
+        const employeeId = document.getElementById('employeeIdInput').value.trim();
+        if (!employeeId) {
+          alert('Please enter an Employee ID');
+          return;
+        }
+
+        try {
+          // Fetch employee data
+          const employeeResponse = await fetch(`/api/employees/by-employeeid/${employeeId}`);
+          if (!employeeResponse.ok) throw new Error('Employee not found');
+          const employee = await employeeResponse.json();
+
+          // Fetch all customers
+          const customersResponse = await fetch('/api/customers');
+          if (!customersResponse.ok) throw new Error('Failed to fetch customers');
+          const allCustomers = await customersResponse.json();
+
+          // Filter customers by assigned area
+          const matchingCustomers = allCustomers.filter(customer =>
+            customer.address && customer.address.toLowerCase().includes(employee.assignedarea.toLowerCase())
+          );
+
+          // Calculate totals
+          const totalCustomers = matchingCustomers.length;
+          const totalPayments = matchingCustomers.reduce((sum, customer) =>
+            sum + (customer.price || 0), 0);
+
+          // Build customers list HTML with tooltips and customer name tooltip for ID
+          const customersList = matchingCustomers.map(c => `
+            <div class="tooltip">
+              <span class="customer-name-tooltip" title="Customer ID: ${c.customerId || 'N/A'}">${c.customerName}</span> (₹${c.price || 0})
+              <span class="tooltiptext">
+                <table class="tooltip-table">
+                  <tr><td>Customer ID:</td><td>${c.customerId || 'N/A'}</td></tr>
+                  <tr><td>Name:</td><td>${c.customerName || 'N/A'}</td></tr>
+                  <tr><td>Address:</td><td>${c.address || 'N/A'}</td></tr>
+                  <tr><td>Contact:</td><td>${c.contact || 'N/A'}</td></tr>
+                  <tr><td>Email:</td><td>${c.email || 'N/A'}</td></tr>
+                  <tr><td>Newspaper:</td><td>${c.newspaper || 'N/A'}</td></tr>
+                  <tr><td>Status:</td><td>${c.status || 'N/A'}</td></tr>
+                  <tr><td>Price:</td><td>₹${c.price || '0'}</td></tr>
+                </table>
+              </span>
+            </div>
+          `).join('<br>');
+
+          // Build payments list HTML
+          const paymentsList = matchingCustomers.map(c =>
+            `₹${c.price || 0}`).join('<br>');
+
+          // Update the table
+          const tbody = document.getElementById('employeeTableBody');
+          tbody.innerHTML = `
+            <tr>
+              <td>${employee.employeeId}</td>
+              <td>${employee.assignedarea}</td>
+              <td>${customersList}</td>
+              <td>${paymentsList}</td>
+              <td>${totalCustomers}</td>
+              <td>₹${totalPayments}</td>
+            </tr>
+          `;
+
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error fetching data: ' + error.message);
+        }
+      }
+    </script>
+    <script src="js/main.js"></script>
+</body>
+</html>

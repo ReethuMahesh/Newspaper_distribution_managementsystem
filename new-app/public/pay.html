@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payments | PathraVahak</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #5c2e14;
+      --accent-color: #decaab;
+      --text-color: black;
+      --card-bg: #fff;
+      --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      --border-color: #eee;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background-color: #f9f7f1;
+      color: var(--text-color);
+    }
+    .sidebar {
+      width: 250px;
+      background-color: var(--primary-color);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+    .sidebar h2 {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: #fff;
+      padding: 12px 20px;
+      margin: 5px 0;
+      border-radius: 6px;
+      transition: background 0.25s, color 0.25s, transform 0.18s, box-shadow 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a:hover,
+    .sidebar a:focus {
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      transform: translateX(8px) scale(1.04);
+      box-shadow: 0 2px 12px rgba(222, 202, 171, 0.18);
+    }
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .receipt-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      padding: 30px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+      display: none;
+    }
+    .receipt-card header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .receipt-card header h2 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 8px;
+    }
+    .receipt-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    .receipt-info strong {
+      font-weight: bold;
+      color: #333;
+    }
+    .receipt-card footer {
+      margin-top: 25px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+    }
+    .input-section {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .input-section label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    .input-section input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .input-section button,
+    .button-container button {
+      background: linear-gradient(90deg, var(--accent-color) 60%, #f3e3c2 100%);
+      color: var(--primary-color);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(92, 46, 20, 0.1);
+      transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.25s,
+        box-shadow 0.25s,
+        transform 0.18s;
+      position: relative;
+      overflow: hidden;
+      outline: none;
+      margin-top: 5px;
+    }
+    .input-section button:hover,
+    .button-container button:hover,
+    .input-section button:focus,
+    .button-container button:focus {
+      background: linear-gradient(90deg, #e5cfa5 40%, var(--accent-color) 100%);
+      color: #3a1c05;
+      box-shadow: 0 4px 18px 0 rgba(92, 46, 20, 0.18), 0 0 0 2px var(--accent-color);
+      transform: translateY(-2px) scale(1.045);
+    }
+    .input-section button:active,
+    .button-container button:active {
+      background: linear-gradient(90deg, #d6b77a 0%, var(--accent-color) 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(92, 46, 20, 0.1);
+      transform: scale(0.98);
+    }
+    .input-section button::after,
+    .button-container button::after {
+      content: "";
+      display: block;
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      width: 8px;
+      height: 8px;
+      left: 50%;
+      top: 50%;
+      background: rgba(92, 46, 20, 0.18);
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
+      transition: opacity 0.35s, transform 0.35s;
+    }
+    .input-section button:active::after,
+    .button-container button:active::after {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(8);
+      transition: 0s;
+    }
+    .button-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+    #datetime {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      font-size: 1rem;
+      color: white;
+      padding: 10px;
+      background-color: black;
+      border-radius: 6px;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    /* PRINT ONLY RECEIPT */
+    @media print {
+      body,
+      html {
+        background: #fff !important;
+      }
+      .sidebar,
+      .input-section,
+      .button-container,
+      #datetime,
+      .main-content > *:not(.receipt-card) {
+        display: none !important;
+      }
+      .receipt-card {
+        display: block !important;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 auto !important;
+        position: static !important;
+        width: 100% !important;
+        max-width: 500px !important;
+        page-break-inside: avoid;
+      }
+      .main-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        align-items: flex-start !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <h2>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="white"
+      >
+        <path
+          d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h7v2H7v-2zm0 4h10v2H7v-2z"
+        />
+      </svg>
+      PathraVahak
+    </h2>
+    <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="employees.html"><i class="fas fa-users-cog"></i> Employees</a>
+    <a href="subscriptions.html"><i class="fas fa-newspaper"></i> Subscriptions</a>
+    <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+    <a href="deliveries.html"><i class="fas fa-box"></i> Deliveries</a>
+    <a href="payments.html"><i class="fas fa-money-bill"></i> Payments</a>
+    <a href="complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a>
+    <a href="newspapers.html"><i class="fas fa-book-open"></i> Newspapers</a>
+    <a href="retailoutlets.html"><i class="fas fa-store"></i> Retail Outlets</a>
+    <a href="retailsales.html"><i class="fas fa-shopping-cart"></i> Retail Sales</a>
+    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    <a href="/api/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div id="datetime"></div>
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const options = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZoneName: "short",
+      };
+      document.getElementById("datetime").textContent = now.toLocaleDateString(
+        "en-IN",
+        options
+      );
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+  <div class="main-content">
+    <div class="input-section">
+      <label for="customerIdInput">Enter Customer ID:</label>
+      <input type="text" id="customerIdInput" placeholder="e.g., 12345" required />
+      <button id="fetchDetailsBtn">Fetch Details</button>
+    </div>
+
+    <div class="receipt-card">
+      <header>
+        <h2>PathraVahak</h2>
+      </header>
+      <div class="receipt-info">
+        <strong>Customer ID:</strong>
+        <span id="customerIdDisplay"></span>
+      </div>
+      <div class="receipt-info">
+        <strong>Customer Name:</strong>
+        <span id="customerNameDisplay"></span>
+      </div>
+      <div class="receipt-info">
+        <strong>Newspaper:</strong>
+        <span id="newspaperDisplay"></span>
+      </div>
+      <div class="receipt-info">
+        <strong>Price:</strong>
+        <span id="priceDisplay"></span>
+      </div>
+      <footer>
+        Receipt Generated On: <span id="receiptDate"></span>
+      </footer>
+    </div>
+
+    <div class="button-container" id="buttonContainer">
+      <button id="printReceiptBtn" onclick="printReceipt()" disabled>
+        <i class="fas fa-print"></i> Print Receipt
+      </button>
+      <button onclick="storeReceipt()">
+        <i class="fas fa-save"></i> Store Receipt
+      </button>
+      <button id="viewReceiptsBtn">
+        <i class="fas fa-list-alt"></i> View Receipts
+      </button>
+    </div>
+  </div>
+  <script>
+    let customersCache = null;
+
+    async function fetchCustomers() {
+      if (customersCache) return customersCache;
+      const res = await fetch("/api/customers");
+      customersCache = await res.json();
+      return customersCache;
+    }
+
+    async function fetchReceipts() {
+      const res = await fetch("/api/receipts");
+      return await res.json();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const customerIdInput = document.getElementById("customerIdInput");
+      const fetchDetailsBtn = document.getElementById("fetchDetailsBtn");
+      const receiptCard = document.querySelector(".receipt-card");
+      const customerIdDisplay = document.getElementById("customerIdDisplay");
+      const customerNameDisplay = document.getElementById("customerNameDisplay");
+      const newspaperDisplay = document.getElementById("newspaperDisplay");
+      const priceDisplay = document.getElementById("priceDisplay");
+      const receiptDate = document.getElementById("receiptDate");
+      const viewReceiptsBtn = document.getElementById("viewReceiptsBtn");
+      const buttonContainer = document.getElementById("buttonContainer");
+      const printReceiptBtn = document.getElementById("printReceiptBtn");
+
+      fetchDetailsBtn.addEventListener("click", async () => {
+        const id = customerIdInput.value.trim();
+        if (!id) {
+          alert("Please enter Customer ID.");
+          return;
+        }
+
+        const customers = await fetchCustomers();
+        const customer = customers.find((c) => String(c.customerId) === id);
+
+        if (customer) {
+          customerIdDisplay.textContent = customer.customerId || "";
+          customerNameDisplay.textContent = customer.customerName || "";
+          newspaperDisplay.textContent = customer.newspaper || "";
+          priceDisplay.textContent =
+            customer.price !== undefined ? `₹${customer.price}` : "";
+
+          const now = new Date();
+          const options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          };
+          receiptDate.textContent = now.toLocaleDateString("en-IN", options);
+
+          receiptCard.style.display = "block";
+          document.querySelector(".input-section").style.display = "none";
+          buttonContainer.style.display = "flex";
+
+          printReceiptBtn.disabled = false; // Enable print button
+        } else {
+          alert("Customer not found!");
+          receiptCard.style.display = "none";
+          document.querySelector(".input-section").style.display = "block";
+          buttonContainer.style.display = "flex";
+
+          printReceiptBtn.disabled = true; // Disable print button
+        }
+      });
+
+      viewReceiptsBtn.addEventListener("click", () => {
+        window.location.href = "receipts.html";
+      });
+
+      buttonContainer.style.display = "flex";
+      printReceiptBtn.disabled = true; // Initially disabled
+    });
+
+    function printReceipt() {
+      const customerId = document
+        .getElementById("customerIdDisplay")
+        .textContent.trim();
+      if (!customerId) {
+        alert(
+          "Please enter a valid Customer ID and fetch receipt before printing."
+        );
+        return;
+      }
+      window.print();
+      setTimeout(() => {
+        document.querySelector(".receipt-card").style.display = "none";
+        document.querySelector(".input-section").style.display = "flex";
+        document.getElementById("customerIdInput").value = "";
+        document.getElementById("printReceiptBtn").disabled = true;
+      }, 500);
+    }
+
+    async function storeReceipt() {
+      const customerId = document.getElementById("customerIdDisplay").textContent;
+      const customerName = document.getElementById("customerNameDisplay").textContent;
+      const newspaper = document.getElementById("newspaperDisplay").textContent;
+      const price = document.getElementById("priceDisplay").textContent;
+      const receiptGeneratedOn = document.getElementById("receiptDate").textContent;
+
+      if (!customerId) {
+        alert("No customer selected!");
+        return;
+      }
+
+      // Check for duplicate
+      try {
+        const receipts = await fetchReceipts();
+        const duplicate = receipts.some(
+          (r) => String(r.customerId) === String(customerId)
+        );
+        if (duplicate) {
+          alert("A receipt for this customer has already been stored!");
+          // Reset UI to enter customer ID
+          document.querySelector(".receipt-card").style.display = "none";
+          document.querySelector(".input-section").style.display = "flex";
+          document.getElementById("customerIdInput").value = "";
+          document.getElementById("printReceiptBtn").disabled = true;
+          return;
+        }
+      } catch (err) {
+        alert("Could not check existing receipts. Try again.");
+        return;
+      }
+
+      const receiptData = {
+        customerId,
+        customerName,
+        newspaper,
+        price,
+        receiptGeneratedOn,
+      };
+
+      fetch("/api/receipts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(receiptData),
+      })
+        .then((response) => {
+          if (response.ok) {
+            alert("Receipt stored successfully!");
+            // Reset UI to enter customer ID
+            document.querySelector(".receipt-card").style.display = "none";
+            document.querySelector(".input-section").style.display = "flex";
+            document.getElementById("customerIdInput").value = "";
+            document.getElementById("printReceiptBtn").disabled = true;
+          } else {
+            alert("Failed to store receipt.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred while storing the receipt.");
+        });
+    }
+  </script>
+</body>
+</html>

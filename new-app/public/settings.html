@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Profile | PathraVahak</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-image: url('news2.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      color: #3a2e1f;
+      position: relative;
+    }
+    /* Overlay styles */
+    .bg-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255,255,255,0.7); /* white with 70% opacity */
+      backdrop-filter: blur(3px); /* subtle blur for modern look */
+      z-index: 0;
+      pointer-events: none;
+    }
+    .profile-container {
+      display: flex;
+      gap: 32px;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 24px 12px;
+      background: rgba(255,255,255,0.92); /* slightly transparent for glass effect */
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+      position: relative;
+      z-index: 1;
+    }
+    .profile-card {
+      flex: 1 1 320px;
+      background: linear-gradient(120deg, #f3e9e2cc 0%, #f7f7faee 100%);
+      border-radius: 12px;
+      padding: 28px 22px;
+      box-shadow: 0 2px 8px rgba(100, 60, 20, 0.06);
+      max-width: 350px;
+      min-width: 260px;
+      align-self: flex-start;
+    }
+    .profile-card h2 {
+      color: #5e3312;
+      font-size: 1.2rem;
+      margin-bottom: 18px;
+      margin-top: 0;
+      text-align: center;
+    }
+    .profile-card p {
+      margin: 10px 0;
+      font-size: 1rem;
+      color: #444;
+    }
+    .profile-card strong {
+      color: #8b5c2d;
+      width: 110px;
+      display: inline-block;
+    }
+    .profile-edit-form {
+      flex: 2 1 400px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .profile-edit-form h1 {
+      text-align: center;
+      color: #6d3e1f;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+      font-size: 1.6rem;
+    }
+    form label {
+      display: block;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      color: #7a4b1e;
+      font-weight: 500;
+    }
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="date"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e0d6c3;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #f8f6f4;
+      margin-bottom: 4px;
+      transition: border-color 0.2s;
+    }
+    form input:focus {
+      border-color: #c19a6b;
+      outline: none;
+      background: #fff;
+    }
+    form input[disabled] {
+      background: #ececec;
+      color: #888;
+      cursor: not-allowed;
+    }
+    button[type="submit"] {
+      margin-top: 24px;
+      width: 100%;
+      background: linear-gradient(90deg, #a86d37 0%, #d8a56d 100%);
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 0;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(168, 109, 55, 0.08);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    button[type="submit"]:hover {
+      background: linear-gradient(90deg, #8b5c2d 0%, #c19a6b 100%);
+      box-shadow: 0 4px 16px rgba(168, 109, 55, 0.15);
+    }
+    #profileMsg {
+      display: block;
+      margin-top: 14px;
+      font-size: 1rem;
+      color: #0a8c2f;
+      text-align: center;
+      min-height: 22px;
+    }
+    @media (max-width: 900px) {
+      .profile-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+        padding: 12px 2vw;
+      }
+      .profile-card, .profile-edit-form {
+        max-width: 100%;
+        min-width: 0;
+      }
+      .profile-edit-form h1 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Transparent overlay -->
+  <div class="bg-overlay"></div>
+  <div class="profile-container">
+    <!-- Profile Card (Left) -->
+    <div class="profile-card" id="profileCard">
+      <h2>Current Details</h2>
+      <p><strong>Name:</strong> <span id="cardName">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="cardEmail">Loading...</span></p>
+      <p><strong>Phone:</strong> <span id="cardPhone">Loading...</span></p>
+      <p><strong>Role:</strong> <span id="cardRole">Loading...</span></p>
+      <p><strong>Date of Birth:</strong> <span id="cardDob">Loading...</span></p>
+      <p><strong>Gender:</strong> <span id="cardGender">Loading...</span></p>
+      <p><strong>City:</strong> <span id="cardCity">Loading...</span></p>
+      <p><strong>Zipcode:</strong> <span id="cardZipcode">Loading...</span></p>
+    </div>
+
+    <!-- Edit Form (Right) -->
+    <div class="profile-edit-form">
+      <h1>Edit Profile</h1>
+      <form id="profileForm" autocomplete="off">
+        <label>Name:</label>
+        <input type="text" name="name" id="name" required>
+        <label>Email:</label>
+        <input type="email" name="email" id="email" disabled>
+        <label>Phone:</label>
+        <input type="text" name="phone" id="phone" required>
+        <label>Role:</label>
+        <input type="text" name="role" id="role" disabled>
+        <label>Date of Birth:</label>
+        <input type="date" name="dob" id="dob" required>
+        <label>Gender:</label>
+        <input type="text" name="gender" id="gender" required>
+        <label>City:</label>
+        <input type="text" name="city" id="city" required>
+        <label>Zipcode:</label>
+        <input type="text" name="zipcode" id="zipcode" required>
+        <button type="submit">Update Profile</button>
+        <span id="profileMsg"></span>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/admin/profile', { credentials: 'include' })
+        .then(response => response.json())
+        .then(data => {
+          // Fill card
+          document.getElementById('cardName').textContent = data.name || '';
+          document.getElementById('cardEmail').textContent = data.email || '';
+          document.getElementById('cardPhone').textContent = data.phone || '';
+          document.getElementById('cardRole').textContent = data.role || '';
+          document.getElementById('cardDob').textContent = data.dob || '';
+          document.getElementById('cardGender').textContent = data.gender || '';
+          document.getElementById('cardCity').textContent = data.city || '';
+          document.getElementById('cardZipcode').textContent = data.zipcode || '';
+          // Fill form
+          document.getElementById('name').value = data.name || '';
+          document.getElementById('email').value = data.email || '';
+          document.getElementById('phone').value = data.phone || '';
+          document.getElementById('role').value = data.role || '';
+          document.getElementById('dob').value = data.dob || '';
+          document.getElementById('gender').value = data.gender || '';
+          document.getElementById('city').value = data.city || '';
+          document.getElementById('zipcode').value = data.zipcode || '';
+        })
+        .catch(() => alert('Failed to load profile data'));
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const updatedData = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        dob: document.getElementById('dob').value,
+        gender: document.getElementById('gender').value,
+        city: document.getElementById('city').value,
+        zipcode: document.getElementById('zipcode').value
+      };
+
+      fetch('/api/admin/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updatedData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Update card with new values
+        document.getElementById('cardName').textContent = data.name || '';
+        document.getElementById('cardPhone').textContent = data.phone || '';
+        document.getElementById('cardDob').textContent = data.dob || '';
+        document.getElementById('cardGender').textContent = data.gender || '';
+        document.getElementById('cardCity').textContent = data.city || '';
+        document.getElementById('cardZipcode').textContent = data.zipcode || '';
+        document.getElementById('profileMsg').textContent = 'Profile updated successfully!';
+      })
+      .catch(() => {
+        document.getElementById('profileMsg').textContent = 'Failed to update profile';
+      });
+    });
+  </script>
+</body>
+</html>

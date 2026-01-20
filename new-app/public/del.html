@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard | Newspaper System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-color: #5C2E14;
+      --accent-color: #decaab;
+      --text-color: #222;
+      --glass-bg: rgba(255,255,255,0.7);
+      --sidebar-bg: linear-gradient(135deg, #5C2E14 80%, #decaab 100%);
+      --card-shadow: 0 8px 32px rgba(92,46,20,0.12);
+      --card-hover: rgba(255,255,255,0.92);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(120deg, #f9f7f1 60%, #e7dfd4 100%);
+      color: var(--text-color);
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Add newspaper background image */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('https://images.unsplash.com/photo-1585829365295-ab7cd400c7e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.08; /* Very low opacity */
+      z-index: 0;
+      pointer-events: none;
+    }
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 14px 14px 14px;
+      transition: transform 0.45s cubic-bezier(.77,0,.18,1);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      box-shadow: 2px 0 18px rgba(92,46,20,0.08);
+      border-top-right-radius: 24px;
+      border-bottom-right-radius: 24px;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 1.6rem;
+      margin-bottom: 32px;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #fff 60%, #decaab 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeInDown 1s;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: #fff;
+      padding: 13px 18px;
+      margin: 6px 0;
+      border-radius: 9px;
+      transition: all 0.28s cubic-bezier(.77,0,.18,1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      font-size: 1.08rem;
+      position: relative;
+      opacity: 0.93;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: var(--accent-color);
+      color: var(--primary-color);
+      transform: translateX(7px) scale(1.04);
+      box-shadow: 0 2px 12px rgba(222,202,171,0.18);
+      font-weight: 600;
+      opacity: 1;
+    }
+    .sidebar .fa {
+      font-size: 1.1em;
+    }
+    #datetime {
+      position: fixed;
+      bottom: 18px;
+      left: 22px;
+      font-size: 1rem;
+      color: #fff;
+      background: rgba(92,46,20,0.94);
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-family: 'Segoe UI', sans-serif;
+      z-index: 999;
+      box-shadow: 0 2px 12px rgba(92,46,20,0.08);
+      letter-spacing: 0.5px;
+      opacity: 0.93;
+      animation: fadeInUp 1.2s;
+    }
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      padding: 38px 32px 32px 32px;
+      height: 100vh;
+      overflow-y: auto;
+      position: relative;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1;
+      animation: fadeInRight 1s;
+    }
+    h1 {
+      font-size: 2.1rem;
+      color: var(--primary-color);
+      margin-bottom: 18px;
+      text-align: center;
+      letter-spacing: 1px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #5C2E14 60%, #decaab 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeInDown 1s;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(40px);}
+      to { opacity: 1; transform: translateX(0);}
+    }
+    .dashboard-cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      justify-content: center;
+    }
+    .card {
+      background: var(--glass-bg);
+      padding: 24px 28px;
+      border-left: 7px solid var(--primary-color);
+      border-radius: 18px;
+      box-shadow: var(--card-shadow);
+      min-width: 210px;
+      min-height: 110px;
+      flex: 1 1 220px;
+      max-width: 340px;
+      transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s;
+      backdrop-filter: blur(3px);
+    }
+    .card:hover {
+      box-shadow: 0 12px 32px rgba(92,46,20,0.17);
+      transform: translateY(-7px) scale(1.035) rotate(-0.5deg);
+      background: var(--card-hover);
+    }
+    .card h3 {
+      font-size: 1.13rem;
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 7px;
+      letter-spacing: 0.5px;
+    }
+    .card p {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #333;
+      letter-spacing: 0.5px;
+      margin-bottom: 0;
+      margin-top: 8px;
+    }
+    .profile-section {
+      position: absolute;
+      top: 24px;
+      right: 38px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent-color);
+      padding: 8px 18px;
+      border-radius: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+      z-index: 10;
+      opacity: 0.98;
+      animation: fadeInDown 1.2s;
+    }
+    .profile-section:hover {
+      box-shadow: 0 4px 18px rgba(92,46,20,0.10);
+      background: #fffbe6;
+    }
+    .profile-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      font-weight: 700;
+      border: 2px solid var(--primary-color);
+      box-shadow: 0 1px 6px rgba(92,46,20,0.09);
+    }
+    .profile-dropdown {
+      display: none;
+      background: #fff;
+      border-radius: 7px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.13);
+      position: absolute;
+      top: 46px;
+      right: 0;
+      padding: 13px 0;
+      min-width: 140px;
+      z-index: 20;
+      animation: fadeInDown 0.4s;
+    }
+    .profile-section:hover .profile-dropdown {
+      display: block;
+    }
+    .profile-dropdown a {
+      display: block;
+      text-decoration: none;
+      color: var(--primary-color);
+      padding: 10px 22px;
+      border-radius: 6px;
+      transition: background 0.2s;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    .profile-dropdown a:hover {
+      background: var(--accent-color);
+      color: #333;
+    }
+
+    /* Animated Table Styles */
+.table-section {
+  margin: 32px 0;
+  animation: fadeInUp 1s;
+}
+
+#monthlySummaryTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--glass-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(92,46,20,0.10);
+  font-size: 1.08rem;
+  transition: box-shadow 0.4s;
+}
+
+#monthlySummaryTable thead tr {
+  background: linear-gradient(90deg, var(--primary-color) 70%, var(--accent-color) 100%);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 1.13rem;
+}
+
+#monthlySummaryTable th, #monthlySummaryTable td {
+  padding: 13px 18px;
+  text-align: center;
+  transition: background 0.25s, color 0.25s;
+}
+
+#monthlySummaryTable tbody tr {
+  background: rgba(255,255,255,0.82);
+  border-bottom: 1.5px solid #f0e5d6;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: rowFadeIn 0.7s forwards;
+}
+
+#monthlySummaryTable tbody tr:hover {
+  background: var(--accent-color);
+  color: var(--primary-color);
+  box-shadow: 0 2px 12px rgba(222,202,171,0.13);
+  cursor: pointer;
+  transform: scale(1.01);
+}
+
+#monthlySummaryTable tfoot th {
+  background: #f6f1e7;
+  color: var(--primary-color);
+  font-size: 1.09rem;
+  font-weight: 700;
+  border-top: 2px solid var(--primary-color);
+  padding-top: 15px;
+}
+
+
+/* Container animation */
+.table-section {
+  margin: 32px 0;
+  animation: fadeInUp 1s cubic-bezier(.23,1.02,.57,.98) forwards;
+}
+
+/* Table styling */
+#newspaperSummaryTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--glass-bg, rgba(255,255,255,0.85));
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(92,46,20,0.10);
+  font-size: 1.08rem;
+  transition: box-shadow 0.4s;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+#newspaperSummaryTable thead tr {
+  background: linear-gradient(90deg, var(--primary-color, #7b3e19) 70%, var(--accent-color, #e6a756) 100%);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 1.13rem;
+}
+
+/* Header and cell base */
+#newspaperSummaryTable th,
+#newspaperSummaryTable td {
+  padding: 13px 18px;
+  text-align: center;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* Body rows with animation */
+#newspaperSummaryTable tbody tr {
+  background: rgba(255,255,255,0.92);
+  border-bottom: 1.5px solid #f0e5d6;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: rowFadeIn 0.7s forwards;
+}
+
+/* Staggered animation (JS will set animation-delay) */
+#newspaperSummaryTable tbody tr {
+  will-change: opacity, transform;
+}
+
+/* Hover effect */
+#newspaperSummaryTable tbody tr:hover {
+  background: var(--accent-color, #e6a756);
+  color: var(--primary-color, #7b3e19);
+  box-shadow: 0 2px 12px rgba(222,202,171,0.13);
+  cursor: pointer;
+  transform: scale(1.01);
+}
+
+/* Footer styling */
+#newspaperSummaryTable tfoot th {
+  background: #f6f1e7;
+  color: var(--primary-color, #7b3e19);
+  font-size: 1.09rem;
+  font-weight: 700;
+  border-top: 2px solid var(--primary-color, #7b3e19);
+  padding-top: 15px;
+}
+
+/* Animations */
+@keyframes rowFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+  #newspaperSummaryTable th,
+  #newspaperSummaryTable td {
+    padding: 8px 6px;
+    font-size: 0.98rem;
+  }
+  .table-section h2 {
+    font-size: 1.15rem;
+  }
+}
+
+@keyframes rowFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+    .charts-section {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    .chart-card {
+      background: var(--glass-bg);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      padding: 22px 18px 18px 18px;
+      min-width: 320px;
+      max-width: 410px;
+      flex: 1 1 340px;
+      margin-bottom: 16px;
+      animation: fadeInUp 1s;
+      backdrop-filter: blur(3px);
+    }
+    .chart-card h3 {
+      font-size: 1.08rem;
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .month-dropdown-container {
+      margin: 10px 0 18px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .month-dropdown {
+      padding: 7px 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background: #fff;
+      color: var(--primary-color);
+      margin-left: 8px;
+      min-width: 120px;
+      transition: border 0.2s;
+    }
+    .month-dropdown:focus {
+      border: 1.5px solid var(--primary-color);
+    }
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .charts-section { flex-direction: column; align-items: center; }
+      .chart-card { max-width: 100%; min-width: 0; width: 100%; }
+    }
+    @media (max-width: 900px) {
+      .dashboard-cards { flex-direction: column; gap: 14px;}
+      .main-content { padding: 22px 7px 7px 7px;}
+      .profile-section { right: 10px; top: 12px;}
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        z-index: 1000;
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .main-content { padding-left: 0; }
+
+
+ 
+
+      #sidebarToggle {
+        display: block;
+        position: fixed;
+        top: 22px;
+        left: 22px;
+        z-index: 2000;
+        background: var(--primary-color);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 42px;
+        height: 42px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(92,46,20,0.1);
+        transition: background 0.2s;
+      }
+      #datetime { left: 72px; }
+    }
+    @media (max-width: 600px) {
+      .main-content { padding: 12px 2vw 2vw 2vw; }
+      .profile-section { right: 2vw; top: 8px;}
+      .dashboard-cards { gap: 8px;}
+      .chart-card { padding: 10px 2vw 10px 2vw;}
+    }
+  </style>
+</head>
+<body>
+  <button id="sidebarToggle" style="display:none;"><i class="fa fa-bars"></i></button>
+  <div class="sidebar" id="sidebar">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h7v2H7v-2zm0 4h10v2H7v-2z"/>
+      </svg>
+      PathraVahak
+    </h2>
+    <a href="dashboard.html" class="active"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="employees.html"><i class="fas fa-users-cog"></i> Employees</a>
+    <a href="subscriptions.html"><i class="fas fa-newspaper"></i> Subscriptions</a>
+    <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+    <a href="deliveries.html"><i class="fas fa-box"></i> Deliveries</a>
+    <a href="payments.html"><i class="fas fa-money-bill"></i> Payments</a>
+    <a href="complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a>
+    <a href="newspapers.html"><i class="fas fa-book-open"></i> Newspapers</a>
+    <a href="retailoutlets.html"><i class="fas fa-store"></i> Retail Outlets</a>
+    <a href="retailsales.html"><i class="fas fa-shopping-cart"></i> Retail Sales</a>
+    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    <a href="/api/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+  <span id="datetime"></span>
+  <div class="main-content">
+    <div class="profile-section">
+      <div class="profile-avatar">A</div>
+      <div class="profile-dropdown">
+        <a href="#">Profile</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>
+      </div>
+    </div>
+    <h1>Welcome to PathraVahak Dashboard</h1>
+    <div class="dashboard-cards">
+      <div class="card">
+  <h3>Total Subscriptions</h3>
+  <p><span id="totalSubscriptions">Loading...</span></p>
+  <span class="icon"><i class="fas fa-newspaper"></i></span>
+</div>
+
+<div class="card">
+  <h3>Recent Payments</h3>
+  <p>₹<span id="recentPayments">Loading...</span> collected this week</p>
+  <span class="icon"><i class="fas fa-money-bill"></i></span>
+</div>
+
+    </div>
+    <!-- table -->
+    <div class="table-section" style="margin:24px 0;">
+  <h2 style="text-align:center; color:var(--primary-color); margin-bottom:12px;">Monthly Subscriptions & Revenue</h2>
+  <table id="monthlySummaryTable" style="width:100%; background:var(--glass-bg); border-radius:10px; box-shadow:0 2px 10px rgba(92,46,20,0.08);">
+    <thead>
+      <tr style="background:var(--accent-color);">
+        <th>Month</th>
+        <th>Number of Subscriptions</th>
+        <th>Total Revenue (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Filled by JS -->
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="2" style="text-align:right;">Grand Total:</th>
+        <th id="grandTotalCell">₹0</th>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- newspaper wise table -->
+<div class="table-section" style="margin:24px 0;">
+  <h2 style="text-align:center; color:var(--primary-color); margin-bottom:12px;">Newspaper-wise Subscriptions</h2>
+  <table id="newspaperSummaryTable" style="width:100%; background:var(--glass-bg); border-radius:10px; box-shadow:0 2px 10px rgba(92,46,20,0.08);">
+    <thead>
+      <tr style="background:var(--accent-color);">
+        <th>Newspaper</th>
+        <th>Number of Subscriptions</th>
+        <th>Total Revenue (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Filled by JS -->
+    </tbody>
+    <tfoot>
+      <tr>
+        <th style="text-align:right;">Grand Total:</th>
+        <th id="newspaperGrandTotalCount">0</th>
+        <th id="newspaperGrandTotalRevenue">₹0</th>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+
+    <div class="charts-section">
+      <div class="chart-card">
+        <div class="month-dropdown-container">
+          <label for="monthDropdown"><b>Select Month:</b></label>
+          <select id="monthDropdown" class="month-dropdown">
+            <option value="all">All Months</option>
+          </select>
+        </div>
+        <h3>Monthly Subscription Revenue</h3>
+        <canvas id="revenueChart" width="320" height="160"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="month-dropdown-container">
+          <label for="newspaperDropdown"><b>Select Newspaper:</b></label>
+          <select id="newspaperDropdown" class="month-dropdown">
+            <option value="Vijaya Karnataka">Vijaya Karnataka</option>
+            <option value="Prajavani">Prajavani</option>
+            <option value="Udayavani">Udayavani</option>
+            <option value="Samyuktha Karnataka">Samyuktha Karnataka</option>
+            <option value="Deccan Herald">Deccan Herald</option>
+          </select>
+        </div>
+        <h3>Monthly Newspaper Sales</h3>
+        <canvas id="salesChart" width="320" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Sidebar toggle for mobile
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    function updateSidebarToggle() {
+      if (window.innerWidth <= 768) {
+        sidebarToggle.style.display = 'block';
+        sidebar.classList.remove('active');
+      } else {
+        sidebarToggle.style.display = 'none';
+        sidebar.classList.add('active');
+      }
+    }
+    sidebarToggle.onclick = () => sidebar.classList.toggle('active');
+    window.addEventListener('resize', updateSidebarToggle);
+    updateSidebarToggle();
+
+    // Date/time
+    function updateDateTime() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+      document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  const salesChart = new Chart(ctx, {
+    type: 'bar', // or 'line', etc.
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: 'Sales',
+        data: [120, 150, 180, 130, 170, 160],
+        backgroundColor: 'rgba(92,46,20,0.7)'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      }
+    }
+  });
+});
+
+    // Fetch monthly summary and populate the table
+async function loadMonthlySummary() {
+  try {
+    const res = await fetch('/api/subscriptions/monthly-summary');
+    if (!res.ok) throw new Error('Failed to fetch summary');
+    const summary = await res.json();
+
+    const tbody = document.querySelector('#monthlySummaryTable tbody');
+    tbody.innerHTML = '';
+    let grandTotal = 0;
+    summary.forEach((row, idx) => {
+      grandTotal += row.revenue;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${formatMonth(row.month)}</td>
+        <td>${row.count}</td>
+        <td>₹${row.revenue.toLocaleString()}</td>
+      `;
+      // Add animation delay for staggered effect
+      tr.style.animationDelay = `${0.08 * idx + 0.2}s`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('grandTotalCell').textContent = `₹${grandTotal.toLocaleString()}`;
+  } catch (err) {
+    console.error(err);
+    document.querySelector('#monthlySummaryTable tbody').innerHTML =
+      `<tr><td colspan="3">Failed to load summary</td></tr>`;
+  }
+}
+
+async function loadNewspaperSummary() {
+  try {
+    const res = await fetch('/api/subscriptions/newspaper-summary');
+    if (!res.ok) throw new Error('Failed to fetch summary');
+    const summary = await res.json();
+
+    const tbody = document.querySelector('#newspaperSummaryTable tbody');
+    tbody.innerHTML = '';
+    let totalCount = 0, totalRevenue = 0;
+    summary.forEach((row, idx) => {
+      totalCount += row.count;
+      totalRevenue += row.revenue;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${row.newspaper}</td>
+        <td>${row.count}</td>
+        <td>₹${row.revenue.toLocaleString()}</td>
+      `;
+      tr.style.animationDelay = `${0.08 * idx + 0.2}s`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('newspaperGrandTotalCount').textContent = totalCount;
+    document.getElementById('newspaperGrandTotalRevenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+  } catch (err) {
+    console.error(err);
+    document.querySelector('#newspaperSummaryTable tbody').innerHTML =
+      `<tr><td colspan="3">Failed to load summary</td></tr>`;
+  }
+}
+
+// Call on page load
+loadNewspaperSummary();
+
+
+// Helper to format YYYY-MM to "May 2025"
+function formatMonth(ym) {
+  const [year, month] = ym.split('-');
+  const date = new Date(year, month - 1);
+  return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+}
+
+// Call on page load
+loadMonthlySummary();
+
+
+    // Revenue Chart
+    let chartInstance = null;
+    let revenueData = [];
+
+    async function fetchMonthlyRevenue() {
+      const res = await fetch('/api/revenue/monthly');
+      return res.json();
+    }
+    function populateMonthDropdown(data) {
+      const dropdown = document.getElementById('monthDropdown');
+      dropdown.innerHTML = '<option value="all">All Months</option>';
+      data.forEach(item => {
+        const [year, month] = item.month.split('-');
+        const date = new Date(year, month - 1);
+        const label = date.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+        const option = document.createElement('option');
+        option.value = item.month;
+        option.textContent = label;
+        dropdown.appendChild(option);
+      });
+    }
+    function renderRevenueChart(data, selectedMonth = 'all') {
+      let labels, revenues;
+      if (selectedMonth === 'all') {
+        labels = data.map(item => {
+          const [year, month] = item.month.split('-');
+          const date = new Date(year, month - 1);
+          return date.toLocaleString('en-IN', { month: 'short', year: '2-digit' });
+        });
+        revenues = data.map(item => item.totalRevenue);
+      } else {
+        const selected = data.find(item => item.month === selectedMonth);
+        if (selected) {
+          labels = [selected.month];
+          revenues = [selected.totalRevenue];
+        } else {
+          labels = [];
+          revenues = [];
+        }
+      }
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Revenue (₹)',
+            data: revenues,
+            backgroundColor: 'rgba(92,46,20,0.3)',
+            borderColor: 'rgba(92,46,20,0.9)',
+            borderWidth: 2,
+            borderRadius: 7
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { color: '#5C2E14' } },
+            x: { ticks: { color: '#5C2E14' } }
+          }
+        }
+      });
+    }
+    // Initialize revenue chart
+    fetchMonthlyRevenue().then(data => {
+      revenueData = data;
+      populateMonthDropdown(data);
+      renderRevenueChart(data);
+    });
+    document.getElementById('monthDropdown').addEventListener('change', function() {
+      renderRevenueChart(revenueData, this.value);
+    });
+
+    // Dummy chart for Newspaper Sales (replace with real data/fetch as needed)
+    const newspaperSalesChart = new Chart(document.getElementById('newspaperSalesChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Sales',
+          data: [120, 135, 110, 145, 160, 130],
+          borderColor: '#5C2E14',
+          backgroundColor: 'rgba(92,46,20,0.13)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#5C2E14' } },
+          x: { ticks: { color: '#5C2E14' } }
+        }
+      }
+    });
+    // You can add logic to update this chart based on dropdown selection as needed.
+    
+async function loadMonthlyNewspaperSalesChart() {
+  try {
+    const res = await fetch('/api/newspaper-sales/monthly');
+    if (!res.ok) throw new Error('Failed to fetch sales data');
+    const data = await res.json();
+
+    // Get unique months and newspapers
+    const months = [...new Set(data.map(row => row.month))].sort();
+    const newspapers = [...new Set(data.map(row => row.newspaper))].sort();
+
+    // Prepare a data map for fast lookup
+    const dataMap = {};
+    data.forEach(row => {
+      if (!dataMap[row.newspaper]) dataMap[row.newspaper] = {};
+      dataMap[row.newspaper][row.month] = row.count;
+    });
+
+    // Prepare datasets for Chart.js
+    const colors = [
+      '#5C2E14', '#decaab', '#e6a756', '#7b3e19', '#a98467', '#f6f1e7', '#c97b63'
+    ];
+    const datasets = newspapers.map((np, idx) => ({
+      label: np,
+      data: months.map(month => dataMap[np][month] || 0),
+      backgroundColor: colors[idx % colors.length],
+      borderRadius: 6
+    }));
+
+    // Render the chart
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    if (window.salesChartInstance) window.salesChartInstance.destroy();
+    window.salesChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: months,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'Monthly Newspaper Sales' }
+        },
+        scales: {
+          x: { stacked: true },
+          y: { stacked: true, beginAtZero: true }
+        }
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    // Optionally, show a message in the UI
+  }
+}
+
+// Call this on page load
+loadMonthlyNewspaperSalesChart();
+
+    
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch('/api/dashsubscriptionsboard')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('totalSubscriptions').textContent = data.totalSubscriptions || '0';
+        document.getElementById('recentPayments').textContent = data.recentPayments || '0';
+        // Add more as needed
+      })
+      .catch(error => {
+        console.error("Dashboard data load error:", error);
+      });
+  });
+
+  async function updateTotalSubscriptions() {
+  try {
+    const res = await fetch('/api/subscriptions/count');
+    const data = await res.json();
+    document.getElementById('totalSubscriptions').textContent = data.count;
+  } catch (err) {
+    document.getElementById('totalSubscriptions').textContent = 'Error';
+  }
+}
+
+// Call on page load
+updateTotalSubscriptions();
+setInterval(updateTotalSubscriptions, 60000); // update every 60s
+
+
+  // ...existing dashboard JS code...
+
+  // --- Recent Payments logic: show total of 5 most recent receipts ---
+ async function updateRecentPayments() {
+  try {
+    const response = await fetch('/api/receipts');
+    if (!response.ok) throw new Error('Failed to fetch receipts');
+    const receipts = await response.json();
+
+    // Sort by timestamp descending
+    receipts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    // Take the 5 most recent
+    const recentFive = receipts.slice(0, 5);
+
+    // Function to extract numeric value from price string like "₹240"
+    function parsePrice(priceStr) {
+      if (!priceStr) return 0;
+      // Remove all non-digit and non-dot characters, then parse as float
+      return parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;
+    }
+
+    // Sum their prices
+    const total = recentFive.reduce((sum, r) => sum + parsePrice(r.price), 0);
+
+    document.getElementById('recentPayments').textContent = total.toLocaleString('en-IN');
+  } catch (err) {
+    document.getElementById('recentPayments').textContent = 'Error';
+    console.error(err);
+  }
+}
+updateRecentPayments();
+
+  </script>
+</body>
+</html>

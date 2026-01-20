@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Newspaper Subscription Plans</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">PathraVahak</div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="login.html">Subscriptions</a></li>
+        <li><a href="login.html">Articles</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="register.html">Signup</a></li>
+      </ul>
+    </nav>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+      <div class="hero-content">
+        <h1>Stay Informed, Stay Ahead</h1>
+        <p>Get unlimited access to trusted news, anytime and anywhere.</p>
+        <a href="#subscriptions" class="button">View Plans</a>
+      </div>
+    </section>
+
+    <!-- Login Prompt -->
+    <div class="login-prompt emphasize">
+      <p>Already a subscriber?</p>
+      <a href="login.html" class="button">Log In</a>
+      <a href="register.html" class="button">Sign Up</a>
+    </div>
+
+    <!-- Subscription Plans -->
+    <section id="subscriptions">
+      <h2>Choose Your Plan</h2>
+      <p class="subscription-intro">Whether you prefer reading on paper or digitally, we've got a plan for you.</p>
+
+      <div class="subscription-grid">
+        <div class="plan-card digital-only">
+          <h3>Digital Access</h3>
+          <div class="plan-price"><span>$</span>5<span class="period">/mo</span></div>
+          <ul class="plan-features">
+            <li>Unlimited articles</li>
+            <li>Mobile & desktop access</li>
+            <li>No ads</li>
+            <li>Cancel anytime</li>
+          </ul>
+          <button class="subscribe-button" onclick="confirmSubscription()">Subscribe</button>
+        </div>
+
+        <div class="plan-card popular">
+          <div class="badge">Popular</div>
+          <h3>Print + Digital</h3>
+          <div class="plan-price"><span>$</span>10<span class="period">/mo</span></div>
+          <ul class="plan-features">
+            <li>Daily printed newspaper</li>
+            <li>Full digital access</li>
+            <li>Mobile app</li>
+            <li>Priority delivery</li>
+          </ul>
+          <button class="subscribe-button" onclick="confirmSubscription()">Subscribe</button>
+        </div>
+
+        <div class="plan-card">
+          <h3>Weekend Only</h3>
+          <div class="plan-price"><span>$</span>7<span class="period">/mo</span></div>
+          <ul class="plan-features">
+            <li>Weekend print delivery</li>
+            <li>Digital weekend access</li>
+            <li>Includes editorials</li>
+            <li>Flexible terms</li>
+          </ul>
+          <button class="subscribe-button" onclick="confirmSubscription()">Subscribe</button>
+        </div>
+      </div>
+
+      <p class="subscription-note">
+        Want to learn more? <a href="#">See all benefits</a> or <a href="#">contact support</a>.
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-about">
+        <h3>Daily Press</h3>
+        <p>Your trusted source for the latest news, analysis, and commentary.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="login.html">Articles</a></li>
+          <li><a href="login.html">Subscriptions</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact Us</h4>
+        <p>Email: support@dailypress.com</p>
+        <p>Phone: +1 (555) 123-4567</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Daily Press. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.querySelector('.nav-links').classList.toggle('show');
+    }
+  </script>
+</body>
+<script>
+    function confirmSubscription() {
+      const confirmed = confirm("You need to log in to subscribe. Redirect to login page?");
+      if (confirmed) {
+        // Optional: Add a small animation before redirecting
+        const button = event.target;
+        button.classList.add("clicked");
+  
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 400); // wait for the animation to finish
+      }
+    }
+  </script>
+</html>
+

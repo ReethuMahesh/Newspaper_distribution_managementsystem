@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Retail Sales | PathraVahak</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #5C2E14;
+      --accent-color: #decaab;
+      --text-color: black;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f7f1;
+      color: var(--text-color);
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: var(--primary-color);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 20px 0 20px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    .sidebar h2 {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: #fff;
+      padding: 12px 20px;
+      margin: 5px 0;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a:hover {
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      transform: translateX(5px);
+    }
+    .content {
+      margin-left: 250px;
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      position: relative;
+      min-height: 100vh;
+    }
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 8rem;
+      color: rgba(0, 0, 0, 0.05);
+      font-weight: 900;
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      z-index: 0;
+    }
+    h1 {
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+    form input, form select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    form button {
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #datetime {
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
+      background: #222;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Segoe UI', sans-serif;
+      box-shadow: 0 2px 12px 0 rgba(92,46,20,0.13);
+      opacity: 0.93;
+      z-index: 2000;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      user-select: none;
+    }
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 100vw;
+        height: auto;
+        position: relative;
+        padding: 10px;
+      }
+      .content {
+        margin-left: 0;
+        padding: 10px;
+      }
+      #datetime {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 10px;
+        font-size: 0.95rem;
+        padding: 8px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <h2 style="display: flex; align-items: center; gap: 10px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h7v2H7v-2zm0 4h10v2H7v-2z"/>
+      </svg>
+      PathraVahak
+    </h2>
+    <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="employees.html"><i class="fas fa-users-cog"></i> Employees</a>
+    <a href="subscriptions.html"><i class="fas fa-newspaper"></i> Subscriptions</a>
+    <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+    <a href="deliveries.html"><i class="fas fa-box"></i> Deliveries</a>
+    <a href="payments.html"><i class="fas fa-money-bill"></i> Payments</a>
+    <a href="complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a>
+    <a href="newspapers.html"><i class="fas fa-book-open"></i> Newspapers</a>
+    <a href="retailoutlets.html"><i class="fas fa-store"></i> Retail Outlets</a>
+    <a href="retailsales.html"><i class="fas fa-shopping-cart"></i> Retail Sales</a>
+    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    <a href="/api/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div class="content">
+    <div class="watermark">PathraVahak</div>
+    <h1>Retail Outlets</h1>
+    <form id="retailSalesForm">
+      <label>Retail Outlet Name:</label>
+      <input type="text" name="outletName" required />
+
+      <label>Newspaper Name:</label>
+      <select name="newspaperName" required>
+        <option value="">-- Select Newspaper --</option>
+        <option value="Vijaya Karnataka">Vijaya Karnataka</option>
+        <option value="Prajavani">Prajavani</option>
+        <option value="Udayavani">Udayavani</option>
+        <option value="Samyuktha Karnataka">Samyuktha Karnataka</option>
+        <option value="Deccan Herald">Deccan Herald</option>
+        <!-- Add more options as needed -->
+      </select>
+
+      <label>Quantity Sold:</label>
+      <input type="number" name="quantitySold" required />
+
+      <label>Unit Price:</label>
+      <input type="number" name="unitPrice" required step="0.01" />
+
+      <label>Sale Date:</label>
+      <input type="date" name="saleDate" required />
+
+      <button type="submit">Add Sale</button>
+    </form>
+  </div>
+
+  <div id="datetime"></div>
+
+  <script>
+    // Date and time updater
+    function updateDateTime() {
+      const now = new Date();
+      const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short'
+      };
+      document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime(); // Initial call
+
+    // Handle form submission
+    document.getElementById('retailSalesForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = {
+        outletName: formData.get('outletName'),
+        newspaperName: formData.get('newspaperName'),
+        quantitySold: parseInt(formData.get('quantitySold')),
+        unitPrice: parseFloat(formData.get('unitPrice')),
+        saleDate: formData.get('saleDate')
+      };
+
+      try {
+        const response = await fetch('/api/retailoutlets', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert(result.message);
+          form.reset(); // Clear form
+        } else {
+          alert(result.message || 'Failed to store sale data.');
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+        alert('Error sending data.');
+      }
+    });
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>

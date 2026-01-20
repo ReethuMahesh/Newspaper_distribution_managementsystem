@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Receipts | PathraVahak</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #5C2E14;
+            --accent-color: #decaab;
+            --text-color: black;
+            --card-bg: #fff;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            --border-color: #eee;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f9f7f1;
+            color: var(--text-color);
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: var(--primary-color);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: #fff;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar a:hover {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            transform: translateX(5px);
+        }
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .receipts-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            width: 100%;
+        }
+        .receipt-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 16px 0 var(--primary-color, #5C2E14);
+            padding: 30px 24px;
+            width: 340px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* Transition for smooth hover effect */
+            transition:
+                box-shadow 0.3s cubic-bezier(.4,1.7,.6,.95),
+                transform 0.3s cubic-bezier(.4,1.7,.6,.95),
+                border-color 0.3s cubic-bezier(.4,1.7,.6,.95);
+        }
+        .receipt-card:hover {
+            /* Slightly lift and scale the card */
+            transform: translateY(-8px) scale(1.025);
+            /* Stronger box shadow with primary color glow */
+            box-shadow: 0 8px 32px 0 var(--primary-color, #5C2E14), 0 1.5px 8px 0 rgba(92,46,20,0.13);
+            border-color: var(--primary-color);
+            z-index: 2;
+        }
+        .print-btn {
+            margin: 18px auto 0 auto;
+            display: block;
+            background: var(--accent-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 6px;
+            padding: 9px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 6px rgba(92,46,20,0.08);
+        }
+        .print-btn:hover {
+            background: #cbb07c;
+        }
+        .print-btn i {
+            margin-right: 6px;
+        }
+        .receipt-card header {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .receipt-card header h2 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        .receipt-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .receipt-info strong {
+            font-weight: bold;
+            color: #333;
+        }
+        .receipt-card footer {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #777;
+        }
+        #datetime {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 1rem;
+            color: white;
+            padding: 10px;
+            background-color: black;
+            border-radius: 6px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h7v2H7v-2zm0 4h10v2H7v-2z"/>
+            </svg>
+            PathraVahak
+        </h2>
+        <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="employees.html"><i class="fas fa-users-cog"></i> Employees</a>
+        <a href="subscriptions.html"><i class="fas fa-newspaper"></i> Subscriptions</a>
+        <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+        <a href="deliveries.html"><i class="fas fa-box"></i> Deliveries</a>
+        <a href="payments.html"><i class="fas fa-money-bill"></i> Payments</a>
+        <a href="complaints.html"><i class="fas fa-exclamation-circle"></i> Complaints</a>
+        <a href="newspapers.html"><i class="fas fa-book-open"></i> Newspapers</a>
+        <a href="retailoutlets.html"><i class="fas fa-store"></i> Retail Outlets</a>
+        <a href="retailsales.html"><i class="fas fa-shopping-cart"></i> Retail Sales</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        <a href="/api/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!-- <div id="datetime"></div> -->
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+            document.getElementById('datetime').textContent = now.toLocaleDateString('en-IN', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+    <div class="main-content">
+        <h1 style="margin-bottom: 32px; color: var(--primary-color);">All Receipts</h1>
+        <div class="receipts-list" id="receiptsList">
+            <!-- Receipt cards will be injected here -->
+        </div>
+    </div>
+    <script>
+        async function fetchReceipts() {
+            const res = await fetch('/api/receipts');
+            if (!res.ok) {
+                alert('Failed to fetch receipts');
+                return [];
+            }
+            return await res.json();
+        }
+
+        // Helper to generate unique ID for each card
+        function getCardId(receipt) {
+            // Use customerId + receiptGeneratedOn for uniqueness
+            return `receipt-card-${receipt.customerId}-${btoa(receipt.receiptGeneratedOn || '')}`;
+        }
+
+        function createReceiptCard(receipt) {
+            const cardId = getCardId(receipt);
+            return `
+            <div class="receipt-card" id="${cardId}">
+                <header>
+                    <h2>PathraVahak</h2>
+                </header>
+                <div class="receipt-info">
+                    <strong>Customer ID:</strong>
+                    <span>${receipt.customerId || ''}</span>
+                </div>
+                <div class="receipt-info">
+                    <strong>Customer Name:</strong>
+                    <span>${receipt.customerName || ''}</span>
+                </div>
+                <div class="receipt-info">
+                    <strong>Newspaper:</strong>
+                    <span>${receipt.newspaper || ''}</span>
+                </div>
+                <div class="receipt-info">
+                    <strong>Price:</strong>
+                    <span>${receipt.price || ''}</span>
+                </div>
+                <footer>
+                    Receipt Generated On: <span>${receipt.receiptGeneratedOn || ''}</span>
+                </footer>
+                <button class="print-btn" onclick="printReceiptCard('${cardId}')">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+            </div>
+            `;
+        }
+
+        async function renderReceipts() {
+            const receipts = await fetchReceipts();
+            const receiptsList = document.getElementById('receiptsList');
+            if (receipts.length === 0) {
+                receiptsList.innerHTML = `<p style="color: #888; font-size: 1.2rem;">No receipts found.</p>`;
+                return;
+            }
+            receiptsList.innerHTML = receipts.map(createReceiptCard).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderReceipts);
+
+        // Print only the selected card
+        function printReceiptCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            const printWindow = window.open('', '', 'height=600,width=400');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Receipt</title>
+                    <style>
+                        body { font-family: 'Segoe UI', sans-serif; padding: 20px; }
+                        .receipt-card { box-shadow: 0 4px 16px #5C2E14; border-radius: 10px; border: 1px solid #eee; padding: 30px 24px; width: 340px; margin: auto; }
+                        .receipt-card header { text-align: center; margin-bottom: 18px; }
+                        .receipt-card header h2 { font-size: 1.3rem; font-weight: bold; color: #5C2E14; margin-bottom: 8px; }
+                        .receipt-info { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1rem; }
+                        .receipt-info strong { font-weight: bold; color: #333; }
+                        .receipt-card footer { margin-top: 18px; text-align: center; font-size: 0.95rem; color: #777; }
+                        .print-btn { display: none; }
+                    </style>
+                </head>
+                <body>
+                    ${card.outerHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+    </script>
+    <script src="js/main.js"></script>
+</body>
+</html>

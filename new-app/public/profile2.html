@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Profile | PathraVahak</title>
+  <link rel="stylesheet" href="dashboard-style.css">
+</head>
+<body>
+  <div class="main-content">
+    <h1>Admin Profile</h1>
+    
+    <!-- Admin Details Card -->
+    <div class="profile-card" id="profileCard" style="border:1px solid #ccc; border-radius:8px; padding:16px; margin-bottom:24px; max-width:400px;">
+      <h2>Current Details</h2>
+      <p><strong>Name:</strong> <span id="cardName">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="cardEmail">Loading...</span></p>
+      <p><strong>Phone:</strong> <span id="cardPhone">Loading...</span></p>
+      <p><strong>Role:</strong> <span id="cardRole">Loading...</span></p>
+      <p><strong>Date of Birth:</strong> <span id="cardDob">Loading...</span></p>
+      <p><strong>Gender:</strong> <span id="cardGender">Loading...</span></p>
+      <p><strong>City:</strong> <span id="cardCity">Loading...</span></p>
+      <p><strong>Zipcode:</strong> <span id="cardZipcode">Loading...</span></p>
+    </div>
+
+    <!-- Edit Form -->
+    <form id="profileForm">
+      <label>Name:</label>
+      <input type="text" name="name" id="name" required>
+      <br>
+      <label>Email:</label>
+      <input type="email" name="email" id="email" disabled>
+      <br>
+      <label>Phone:</label>
+      <input type="text" name="phone" id="phone" required>
+      <br>
+      <label>Role:</label>
+      <input type="text" name="role" id="role" disabled>
+      <br>
+      <label>Date of Birth:</label>
+      <input type="date" name="dob" id="dob" required>
+      <br>
+      <label>Gender:</label>
+      <input type="text" name="gender" id="gender" required>
+      <br>
+      <label>City:</label>
+      <input type="text" name="city" id="city" required>
+      <br>
+      <label>Zipcode:</label>
+      <input type="text" name="zipcode" id="zipcode" required>
+      <br>
+      <button type="submit">Update Profile</button>
+      <span id="profileMsg"></span>
+    </form>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/admin/profile')
+        .then(response => response.json())
+        .then(data => {
+          // Fill card
+          document.getElementById('cardName').textContent = data.name || '';
+          document.getElementById('cardEmail').textContent = data.email || '';
+          document.getElementById('cardPhone').textContent = data.phone || '';
+          document.getElementById('cardRole').textContent = data.role || '';
+          document.getElementById('cardDob').textContent = data.dob || '';
+          document.getElementById('cardGender').textContent = data.gender || '';
+          document.getElementById('cardCity').textContent = data.city || '';
+          document.getElementById('cardZipcode').textContent = data.zipcode || '';
+          // Fill form
+          document.getElementById('name').value = data.name || '';
+          document.getElementById('email').value = data.email || '';
+          document.getElementById('phone').value = data.phone || '';
+          document.getElementById('role').value = data.role || '';
+          document.getElementById('dob').value = data.dob || '';
+          document.getElementById('gender').value = data.gender || '';
+          document.getElementById('city').value = data.city || '';
+          document.getElementById('zipcode').value = data.zipcode || '';
+        })
+        .catch(() => alert('Failed to load profile data'));
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const updatedData = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        dob: document.getElementById('dob').value,
+        gender: document.getElementById('gender').value,
+        city: document.getElementById('city').value,
+        zipcode: document.getElementById('zipcode').value
+      };
+
+      fetch('/api/admin/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Update card with new values
+        document.getElementById('cardName').textContent = data.name || '';
+        document.getElementById('cardPhone').textContent = data.phone || '';
+        document.getElementById('cardDob').textContent = data.dob || '';
+        document.getElementById('cardGender').textContent = data.gender || '';
+        document.getElementById('cardCity').textContent = data.city || '';
+        document.getElementById('cardZipcode').textContent = data.zipcode || '';
+        document.getElementById('profileMsg').textContent = 'Profile updated successfully!';
+      })
+      .catch(() => {
+        document.getElementById('profileMsg').textContent = 'Failed to update profile';
+      });
+    });
+  </script>
+</body>
+</html>
